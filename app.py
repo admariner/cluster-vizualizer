@@ -24,10 +24,10 @@ def insert_data(hierarchy, cluster, subcluster, keyword, volume, url, type):
 def process_file(file):
     hierarchy = {}
     df = pd.read_csv(file)
-    
+
     # Convert all column names to lowercase
     df.columns = df.columns.str.lower()
-    
+
     # Check if necessary columns are present
     required_columns = ['cluster', 'subcluster', 'page title', 'volume', 'url', 'type']
     for col in required_columns:
@@ -36,7 +36,11 @@ def process_file(file):
 
     for _, row in df.iterrows():
         insert_data(hierarchy, row['cluster'], row['subcluster'], row['page title'], row['volume'], row['url'], row['type'])
-    return {"name": "Root", "children": [value for key, value in hierarchy.items()], "value": sum([value["value"] for key, value in hierarchy.items()])}
+    return {
+        "name": "Root",
+        "children": [value for key, value in hierarchy.items()],
+        "value": sum(value["value"] for key, value in hierarchy.items()),
+    }
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
